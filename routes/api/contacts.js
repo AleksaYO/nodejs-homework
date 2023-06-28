@@ -21,7 +21,7 @@ router.use(validateToken);
 
 router.get("/", async (req, res, next) => {
   try {
-    const contacts = await listContacts();
+    const contacts = await listContacts(req.user);
     res.json(contacts);
   } catch (error) {
     next(error);
@@ -43,7 +43,8 @@ router.get("/:contactId", validateId, async (req, res, next) => {
 
 router.post("/", validator, async (req, res, next) => {
   try {
-    const newContact = await addContact(req.body);
+    const { _id: owner } = req.user;
+    const newContact = await addContact(req.body, owner);
     res.status(201).json(newContact);
   } catch (error) {
     next(error);

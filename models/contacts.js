@@ -1,7 +1,11 @@
 const Contacts = require("./contact");
 
-const listContacts = async () => {
-  const contacts = await Contacts.find();
+const listContacts = async (user) => {
+  const options = {
+    owner: user._id,
+  };
+
+  const contacts = await Contacts.find(options);
   return contacts;
 };
 
@@ -16,7 +20,7 @@ const removeContact = async (contactId) => {
   else return false;
 };
 
-const addContact = async (body) => {
+const addContact = async (body, owner) => {
   const contacts = await Contacts.find();
 
   const ERROR_MESSAGE = "Такой контакт уже существует";
@@ -24,7 +28,7 @@ const addContact = async (body) => {
   if (contacts.some((item) => item.phone === body.phone)) {
     return ERROR_MESSAGE;
   } else {
-    const contact = await Contacts.create(body);
+    const contact = await Contacts.create({ ...body, owner });
     return contact;
   }
 };
